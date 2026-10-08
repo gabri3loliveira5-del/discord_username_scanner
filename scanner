@@ -1,0 +1,62 @@
+
+    : "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  names = [];
+  while (names.length < amount) {
+    const name = generateName(length, chars);
+    if (!names.includes(name)) names.push(name);
+  }
+
+  $("total").textContent = names.length;
+  $("copied").textContent = copied;
+  $("status").textContent =
+    "Nomes gerados. Disponibilidade não verificada.";
+
+  const results = $("results");
+  results.innerHTML = "";
+
+  names.forEach(name => {
+    const row = document.createElement("div");
+    row.className = "name";
+
+    const code = document.createElement("code");
+    code.textContent = name;
+
+    const button = document.createElement("button");
+    button.textContent = "Copiar";
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(name);
+        copied++;
+        $("copied").textContent = copied;
+        $("status").textContent = name + " copiado!";
+      } catch {
+        $("status").textContent =
+          "Não foi possível copiar automaticamente.";
+      }
+    });
+
+    row.append(code, button);
+    results.appendChild(row);
+  });
+});
+
+$("copyAll").addEventListener("click", async () => {
+  if (!names.length) {
+    $("status").textContent = "Gere nomes primeiro.";
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(names.join("\n"));
+    copied += names.length;
+    $("copied").textContent = copied;
+    $("status").textContent = "Todos os nomes foram copiados!";
+  } catch {
+    $("status").textContent =
+      "Falha ao copiar. Tente novamente.";
+  }
+});
+</script>
+</body>
+</html>
